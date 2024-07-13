@@ -1,0 +1,227 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Arch Linux问题处理 · LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Arch Linux问题处理</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2020-04-02</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="Arch"> Arch</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="Linux"> Linux</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="指南"> 指南</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="教程"> 教程</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">1.3k</span> | Reading time: <span class="post-count">5</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><ul>
+<li>目录</li>
+</ul>
+<!-- toc -->
+
+<ul>
+<li><a href="#1-%E7%BB%88%E7%AB%AF%E5%85%89%E6%A0%87%E9%94%99%E4%BD%8D">1、终端光标错位</a></li>
+<li><a href="#2-%E5%AE%89%E8%A3%85tim">2、安装Tim</a></li>
+<li><a href="#3-%E5%90%8C%E6%AD%A5%E6%97%B6%E9%97%B4%E9%97%AE%E9%A2%98">3、同步时间问题</a></li>
+<li><a href="#4-%E6%97%A0%E6%B3%95%E6%8C%82%E8%BD%BDwindows%E5%88%86%E5%8C%BA">4、无法挂载windows分区</a></li>
+<li><a href="#5-%E6%9F%A5%E7%9C%8B%E5%86%85%E6%A0%B8%E6%97%A5%E5%BF%97">5、查看内核日志</a></li>
+<li><a href="#6-%E5%85%B3%E6%9C%BA%E9%87%8D%E5%90%AF%E5%8D%A1%E4%BD%8F%E9%97%AE%E9%A2%98">6、关机重启卡住问题</a></li>
+<li><a href="#7-pacman%E6%9B%B4%E6%96%B0%E7%B3%BB%E7%BB%9F%E6%88%96%E5%AE%89%E8%A3%85%E8%BD%AF%E4%BB%B6%E9%94%81%E5%AE%9A">7、pacman更新系统或安装软件锁定</a></li>
+<li><a href="#8-%E5%BC%80%E6%9C%BA%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2%E9%BB%91%E5%B1%8F%E4%BD%86%E6%98%AF%E5%8F%AF%E4%BB%A5%E7%9B%B2%E6%89%93%E5%AF%86%E7%A0%81">8、开机登录界面黑屏，但是可以盲打密码</a></li>
+<li><a href="#9-%E5%8A%A0%E5%85%A5multilib32%E4%BD%8D%E5%BA%93%E6%94%AF%E6%8C%81">9、加入multilib32位库支持</a></li>
+<li><a href="#10-%E6%9B%B4%E6%94%B9%E9%BB%98%E8%AE%A4shell%E8%A7%81-archwiki">10、更改默认shell(见 archwiki)</a></li>
+<li><a href="#11-%E5%BE%85%E8%A1%A5%E5%85%85">11、待补充</a></li>
+<li><a href="#12-%E5%AE%89%E8%A3%85networkmanager%E5%90%8E%E6%B2%A1%E6%B3%95%E4%BD%BF%E7%94%A8%E6%B2%A1%E6%9C%89%E6%89%98%E7%9B%98%E5%9B%BE%E6%A0%87">12、安装NetworkManager后没法使用，没有托盘图标</a></li>
+<li><a href="#13-%E6%B7%BB%E5%8A%A0%E4%B8%AD%E5%9B%BD%E7%A4%BE%E5%8C%BA%E6%BA%90%E6%B8%85%E5%8D%8E%E6%88%96%E8%80%85163%E9%83%BD%E5%8F%AF%E4%BB%A51-%E7%BB%88%E7%AB%AF%E5%85%89%E6%A0%87%E9%94%99%E4%BD%8D">13、添加中国社区源（清华或者163都可以）1、终端光标错位</a></li>
+<li><a href="#14-%E5%AE%89%E8%A3%85%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2">14、安装图形界面</a></li>
+<li><a href="#15-nvidia%E6%98%BE%E5%8D%A1%E9%A9%B1%E5%8A%A8%E4%BB%A5%E5%8F%8A%E5%A4%A7%E9%BB%84%E8%9C%82bumblebee">15、nvidia显卡驱动以及大黄蜂bumblebee</a></li>
+<li><a href="#16-make%E7%BC%96%E8%AF%91%E8%BD%AF%E4%BB%B6%E6%97%B6%E4%B8%8D%E8%83%BD%E6%89%A7%E8%A1%8C%E5%8F%AF%E8%83%BD%E5%8E%9F%E5%9B%A0">16、make编译软件时不能执行(可能原因)</a></li>
+<li><a href="#17-bbswitch%E5%8A%A8%E6%80%81%E5%88%87%E6%8D%A2%E4%B8%8D%E8%83%BD%E7%94%A8%E9%9C%80%E8%A6%81%E4%B8%8B%E8%BD%BD%E7%BC%96%E8%AF%91">17、bbswitch动态切换不能用（需要下载编译）</a></li>
+<li><a href="#18-wine%E8%AE%BE%E7%BD%AE%E4%B8%AD%E5%AD%97%E4%BD%93%E5%8F%91%E8%99%9A">18、Wine设置中字体发虚</a></li>
+<li><a href="#19-%E9%85%8D%E7%BD%AEssh%E5%B1%80%E5%9F%9F%E7%BD%91%E9%80%9A%E8%BF%87putty%E7%AD%89ssh%E5%B7%A5%E5%85%B7%E5%AE%89%E8%A3%85%E7%B3%BB%E7%BB%9F">19、配置ssh，局域网通过putty等ssh工具安装系统</a></li>
+<li><a href="#20-%E7%94%BB%E9%9D%A2%E6%92%95%E8%A3%82%E9%97%AE%E9%A2%98%E5%A6%82bilibili">20、画面撕裂问题（如bilibili）</a></li>
+<li><a href="#21-%E8%BE%93%E5%85%A5%E6%B3%95%E5%AE%89%E8%A3%85">21、输入法安装</a></li>
+</ul>
+<!-- tocstop -->
+
+<h4><span id="1-终端光标错位">1、终端光标错位</span></h4><p><em><strong>修改konsole中的字体为dejaVv即可</strong></em></p>
+<h4><span id="2-安装tim">2、安装Tim</span></h4><p> <em><strong>配置国内社区源&#x2F;etc&#x2F;pacman.conf（见<a href="#13">目录13</a>）</strong></em></p>
+<p> <em><strong>添加32位库支持(见<a href="#09">目录9</a>)</strong></em></p>
+<p><em><strong>然后</strong></em> <em><strong>pacman -Syyu</strong>__<strong>更新软件源</strong></em></p>
+<p><em><strong>之后安装</strong><strong><strong>tim</strong></strong><strong>：</strong>__<strong>sudo pacman -S deepin.com.qq.office</strong></em></p>
+<p><em><strong>最后加一条开机自启动命令</strong></em> <em><strong># &#x2F;usr&#x2F;lib&#x2F;gsd-xsettings</strong></em></p>
+<h4><span id="3-同步时间问题">3、同步时间问题</span></h4><p><em><strong>设置时区：</strong>__<strong>sudo ln -sf &#x2F;usr&#x2F;share&#x2F;zoneinfo&#x2F;Asia&#x2F;Shanghai &#x2F;etc&#x2F;localtime</strong></em></p>
+<p><em><strong>安装</strong><strong><strong>openNTPD</strong></strong><strong>：</strong>__<strong>sudo pacman -S openntpd</strong></em></p>
+<p><em><strong>重启</strong><strong><strong>openNTPD</strong></strong><strong>：</strong>__<strong>systemctl restart openntpd</strong></em></p>
+<p><em><strong>设置开机启动：</strong>__<strong>systemctl enable openntpd</strong></em></p>
+<h4><span id="4-无法挂载windows分区">4、无法挂载windows分区</span></h4><p><em><strong>安装</strong><strong><strong>ntfs</strong></strong><strong>驱动</strong></em> <em><strong>ntfs-3g</strong></em> <em><strong>软件包</strong></em></p>
+<p><em><strong>sudo pacman -S ntfs-3g</strong></em></p>
+<h4><span id="5-查看内核日志">5、查看内核日志</span></h4><p><em><strong>journalctl –dmesg</strong></em></p>
+<h4><span id="6-关机重启卡住问题">6、关机重启卡住问题</span></h4><p><strong>grub编辑中“linux“后面加入acpi_<em>osi&#x3D;”!Windows 2015”</em></strong></p>
+<h4><span id="7-pacman更新系统或安装软件锁定">7、pacman更新系统或安装软件锁定</span></h4><p><em><strong>$pacman -Syu</strong>__<strong>，遇到下列问题：</strong></em></p>
+<p> <em><strong>error: failed to init transaction (unable to lock database)error: could not lock database:…</strong></em></p>
+<p><strong>解决方法：</strong></p>
+<p><em><strong>、</strong>__<strong>$ sudo rm &#x2F;var&#x2F;lib&#x2F;pacman&#x2F;db.lck</strong></em></p>
+<h4><span id="8-开机登录界面黑屏但是可以盲打密码">8、开机登录界面黑屏，但是可以盲打密码</span></h4><p>禁止nvidia驱动（一般安装图形界面完美就不会出现这个问题）</p>
+<p>在 &#x2F;etc&#x2F;modprobe.d 中添加 no-nvidia.conf 文件</p>
+<p>blacklist nvidia</p>
+<p>blacklist nvidia_drm</p>
+<p>blacklist nouveau</p>
+<h4><span id="9-加入multilib32位库支持">9、加入multilib32位库支持</span></h4><p>&#x2F;etc&#x2F;pacman.conf中增加</p>
+<p><strong>[multilib]</strong></p>
+<p><strong>Include &#x3D; &#x2F;etc&#x2F;pacman.d&#x2F;mirrorlist</strong></p>
+<p>通过pacman安装lib32-glibc库就能提供基本的32位支持</p>
+<h4><span id="10-更改默认shell见-archwiki">10、更改默认shell(见 archwiki)</span></h4><p><strong>sudo chsh -s (shell的位置)</strong></p>
+<p>如：sudo chsh -s &#x2F;bin&#x2F;bash</p>
+<h4><span id="11-待补充">11、待补充</span></h4><p><em><strong>空</strong></em></p>
+<h4><span id="12-安装networkmanager后没法使用没有托盘图标">12、安装NetworkManager后没法使用，没有托盘图标</span></h4><p>确定自己安装了plasma-nm</p>
+<p>1 #pacman -S networkmanager plasma-nm</p>
+<p>2 #systemctl start NetworkManager</p>
+<p>3 #systemctl enable NetworkManager</p>
+<h4><span id="13-添加中国社区源清华或者163都可以1-终端光标错位">13、添加中国社区源（清华或者163都可以）1、终端光标错位</span></h4><p>使用方法：在 &#x2F;etc&#x2F;pacman.conf 文件末尾添加以下两行：</p>
+<p>[archlinuxcn]</p>
+<p>Server &#x3D; <a target="_blank" rel="noopener" href="https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch">https://mirrors.tuna.tsinghua.edu.cn/archlinuxcn/$arch</a></p>
+<p>之后安装 archlinuxcn-keyring 包导入 GPG key</p>
+<h4><span id="14-安装图形界面">14、安装图形界面</span></h4><p><strong>安装窗口管理器</strong>pacman -S xorg xorg-xinit</p>
+<p><strong>安装显示管理器</strong>pacman -S sddm sddm-kcm</p>
+<p>设置开机自启systemctl enable sddm</p>
+<p><strong>安装桌面环境</strong>（<a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/KDE_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)">参考Wiki</a>）</p>
+<p>最全安装pacman -S plasma</p>
+<p>安装软件pacman -S kde-applications</p>
+<h4><span id="15-nvidia显卡驱动以及大黄蜂bumblebee">15、nvidia显卡驱动以及大黄蜂bumblebee</span></h4><p>见后续文章 nvidia &amp; bumblebee （未更新）</p>
+<h4><span id="16-make编译软件时不能执行可能原因">16、make编译软件时不能执行(可能原因)</span></h4><p>需要把对应uname -a查看的内核版本的kernel header下载</p>
+<p>yaourt linux-header 查看有什么内核头</p>
+<p>（我这里用的是yaourt linux-lts-headers，根据情况）</p>
+<p>最后实际安装的是**core&#x2F;**<strong>linux-lts-headers</strong> <strong>4.19.76-1</strong></p>
+<p>之后就可以make来编译了</p>
+<h4><span id="17-bbswitch动态切换不能用需要下载编译">17、bbswitch动态切换不能用（需要下载编译）</span></h4><p>详细内容见：<a target="_blank" rel="noopener" href="https://github.com/Bumblebee-Project/bbswitch">Github link</a></p>
+<p>$ make</p>
+<p>$ sudo make load</p>
+<p>看状态：$cat &#x2F;proc&#x2F;acpi&#x2F;bbswitch </p>
+<p>打开关闭：</p>
+<p>$ sudo tee &#x2F;proc&#x2F;acpi&#x2F;bbswitch &lt;&lt;&lt;OFF</p>
+<p>$ sudo tee &#x2F;proc&#x2F;acpi&#x2F;bbswitch &lt;&lt;&lt;ON</p>
+<p>查看是否成功</p>
+<p>$ dmesg tail -1</p>
+<p>没卸载驱动一般都不可以直接关掉</p>
+<h4><span id="18-wine设置中字体发虚">18、Wine设置中字体发虚</span></h4><p>见后续文章 Wine问题总结（未更新）</p>
+<h4><span id="19-配置ssh局域网通过putty等ssh工具安装系统">19、配置ssh，局域网通过putty等ssh工具安装系统</span></h4><p>如果我们是按照wiki的步骤来装系统，那么一些长而无用的命令无法copy，这时候我们可以尝试局域网其他终端来远程安装。</p>
+<p>用镜像开机后，终端输入</p>
+<p>$ systemctl start sshd  #打开ssh服务</p>
+<p>$ passwd  #设置临时root密码</p>
+<p>然后使用root和设置的password即可ssh连接</p>
+<p>注：systemctl enable sshd可以开机启动ssh服务</p>
+<h4><span id="20-画面撕裂问题如bilibili">20、画面撕裂问题（如bilibili）</span></h4><p><em><strong>浏览网页，看BILIBILI视频的弹幕，如果驱动不是很合适，会出现严重撕裂问题，以下是我的解决方案：</strong></em></p>
+<p>注意：此方法可能会使一些OpenGL程序性能下降，可能会导致WebGL出现一些问题</p>
+<p>（要想更加流畅，Chrome还可以安装一个插件 SmoothScroll:平滑滚动）</p>
+<p>临时命令</p>
+<p>$ nvidia-settings –assign CurrentMetaMode&#x3D;”nvidia-auto-select +0+0 { ForceFullCompositionPipeline &#x3D; On }”</p>
+<p>永久更改方法</p>
+<p>~$ nvidia-xconfig</p>
+<p>~$ cd &#x2F;etc&#x2F;X11&#x2F;</p>
+<p>~$ sudo mv xorg.conf xorg.conf.d&#x2F;20-nvidia.conf</p>
+<p>~$ sudo nano 20-nvidia.conf</p>
+<p>将此文件的 Section “Screen” 部分加入下面几行，其他 Section 可以删掉，然后重启就可以了。</p>
+<p>Section “Screen”</p>
+<p>Identifier “Screen0”</p>
+<p>Option “metamodes” “nvidia-auto-select +0+0 { ForceFullCompositionPipeline &#x3D; On }”</p>
+<p>Option “AllowIndirectGLXProtocol” “off”</p>
+<p>Option “TripleBuffer” “on”</p>
+<p>EndSection</p>
+<h4><span id="21-输入法安装">21、输入法安装</span></h4><p>详细见Wiki，建议安装google输入法，而不是sogou</p>
+<hr>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://blog.lebear.top">Leisurelybear</a></p><p> <span>Link:  </span><a href="https://blog.lebear.top/2020/04/02/162/">https://blog.lebear.top/2020/04/02/162/</a></p><p> <span>Copyright:  </span><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2020/07/01/194/" title="Python爬虫实战 - 爬取视频网站的下载链接"><span>< PreviousPost</span><br><span class="prevTitle">Python爬虫实战 - 爬取视频网站的下载链接</span></a><a class="nextSlogan" href="/2020/03/14/142/" title="Spring MVC源码分析（一）：处理前端请求doDispatch()以及getHandler()方法细节"><span>NextPost ></span><br><span class="nextTitle">Spring MVC源码分析（一）：处理前端请求doDispatch()以及getHandler()方法细节</span></a><div class="clear"></div></div><div id="comment"><div id="container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script><script>const gitalk = new Gitalk({
+  clientID: '7b32efbea888ff18bf71',
+  clientSecret: 'd6d9022e73dfc0e9e55dc8ad8604a5aa73447595',
+  repo: 'blog.lebear.top-comment',      // The repository of store comments,
+  owner: 'Leisurelybear',
+  admin: ['leisurelybear'],
+  id: location.pathname,      // Ensure uniqueness and length less than 50
+  distractionFreeMode: false  // Facebook-like distraction free mode
+})
+gitalk.render('container')
+console.log("enable gitalk.")</script></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 80vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">1、终端光标错位</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">2、安装Tim</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">3、同步时间问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">4、无法挂载windows分区</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">5、查看内核日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">6、关机重启卡住问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text">7、pacman更新系统或安装软件锁定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">8.</span> <span class="toc-text">8、开机登录界面黑屏，但是可以盲打密码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">9.</span> <span class="toc-text">9、加入multilib32位库支持</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">10.</span> <span class="toc-text">10、更改默认shell(见 archwiki)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">11.</span> <span class="toc-text">11、待补充</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">12.</span> <span class="toc-text">12、安装NetworkManager后没法使用，没有托盘图标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">13.</span> <span class="toc-text">13、添加中国社区源（清华或者163都可以）1、终端光标错位</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">14.</span> <span class="toc-text">14、安装图形界面</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">15.</span> <span class="toc-text">15、nvidia显卡驱动以及大黄蜂bumblebee</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">16.</span> <span class="toc-text">16、make编译软件时不能执行(可能原因)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">17.</span> <span class="toc-text">17、bbswitch动态切换不能用（需要下载编译）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">18.</span> <span class="toc-text">18、Wine设置中字体发虚</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">19.</span> <span class="toc-text">19、配置ssh，局域网通过putty等ssh工具安装系统</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">20.</span> <span class="toc-text">20、画面撕裂问题（如bilibili）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">21.</span> <span class="toc-text">21、输入法安装</span></a></li></ol></div><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

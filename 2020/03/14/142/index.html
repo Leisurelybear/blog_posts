@@ -1,0 +1,135 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Spring MVC源码分析（一）：处理前端请求doDispatch()以及getHandler()方法细节 · LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Spring MVC源码分析（一）：处理前端请求doDispatch()以及getHandler()方法细节</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2020-03-14</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="java"> java</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="Spring MVC"> Spring MVC</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="源码分析"> 源码分析</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">1k</span> | Reading time: <span class="post-count">4</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p>首先： 容器启动时候，会在DispatcherServlet的handlerMappings中添加beanName与类对应的map映射， 以便于后续getHandler时候用{GET &#x2F;test&#x2F;t1}来取得对应请求的方法 。</p>
+<p><img src="https://zhangxujie.tk/wp-content/uploads/2020/03/image-10.png"></p>
+<p>map映射</p>
+<p>简要流程：</p>
+<hr>
+<ol>
+<li>所有请求发来，到DispatcherServlet收到请求</li>
+<li>调用doDispatch()方法进行处理<ol>
+<li>getHandler()：根据请求地址和mappingRegistry（上面有提到，可查找）找到能处理这个请求的目标处理类（处理器&lt;控制器&gt;）</li>
+<li>getHandlerAdapter()：根据当前处理器类（控制器）获取能处理这个处理器方法的适配器；</li>
+<li>使用获得的适配器ha(AnnotationMethodHandlerAdapter)执行目标方法</li>
+<li>适配器调用目标方法后，都会返回ModelAndView对象<strong>mv &#x3D; ha.handle(processedRequest</strong><strong>,</strong> <strong>response</strong><strong>,</strong> <strong>mappedHandler.getHandler())</strong></li>
+<li>根据ModelAndView信息转发到具体页面，并可以在请求域中取得对象的Model数据</li>
+</ol>
+</li>
+</ol>
+<hr>
+<p>前端发送请求后，在DispatcherServlet类中， 底层调用doDispatch()方法 。</p>
+<p><code>protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception &#123; HttpServletRequest processedRequest = request; HandlerExecutionChain mappedHandler = null; boolean multipartRequestParsed = false; WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request); try &#123; ModelAndView mv = null; Exception dispatchException = null; try &#123; //1、检查是否为文件上传请求 processedRequest = checkMultipart(request); multipartRequestParsed = (processedRequest != request); // Determine handler for the current request. //2、决定哪个控制器处理这个请求，下面有代码解释 mappedHandler = getHandler(processedRequest); //取出后会发现值为：public java.lang.String com.zhangxujie.controller.TestController.t1() //3、如果未找到处理这个请求的控制器，则异常等处理 if (mappedHandler == null) &#123; noHandlerFound(processedRequest, response); return; &#125; // Determine handler adapter for the current request. //4、知道请求的类后，要拿到响应的适配器去处理请求，而不是用原始类处理（拿到反射工具） HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler()); //取得了对应的注解适配器，目的可能为了方便Spring的AOP操作 // Process last-modified header, if supported by the handler. // 获取请求方式，当前为GET String method = request.getMethod(); boolean isGet = &quot;GET&quot;.equals(method); if (isGet &quot;HEAD&quot;.equals(method)) &#123;//如果是GET请求，如何如何，加缓存等等 long lastModified = ha.getLastModified(request, mappedHandler.getHandler()); if (new ServletWebRequest(request, response).checkNotModified(lastModified) &amp;&amp; isGet) &#123; return; &#125; &#125; if (!mappedHandler.applyPreHandle(processedRequest, response)) &#123; return; &#125; //5、适配器执行目标方法 // Actually invoke the handler，处理器方法被真正调用 //控制器（Controller）=处理器（handler） mv = ha.handle(processedRequest, response, mappedHandler.getHandler()); //通过适配器执行目标方法，返回ModelAndView对象（本段代码结束后图一） //代码内部在7、Spring MVC 部分源码分析(2) //无论目标方法如何写，最终适配器都要执行后返回ModelAndView对象 if (asyncManager.isConcurrentHandlingStarted()) &#123; return; &#125; applyDefaultViewName(processedRequest, mv); mappedHandler.applyPostHandle(processedRequest, response, mv); &#125; catch (Exception ex) &#123; dispatchException = ex; &#125; catch (Throwable err) &#123; // As of 4.3, we&#39;re processing Errors thrown from handler methods as well, // making them available for @ExceptionHandler methods and other scenarios. dispatchException = new NestedServletException(&quot;Handler dispatch failed&quot;, err); &#125; //6、根据方法最终执行后封装的ModelAndView转发到对应页面，而且ModelAndView中的数据可以从请求域中获取 processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException); &#125; catch (Exception ex) &#123; triggerAfterCompletion(processedRequest, response, mappedHandler, ex); &#125; catch (Throwable err) &#123; triggerAfterCompletion(processedRequest, response, mappedHandler, new NestedServletException(&quot;Handler processing failed&quot;, err)); &#125; finally &#123; if (asyncManager.isConcurrentHandlingStarted()) &#123; // Instead of postHandle and afterCompletion if (mappedHandler != null) &#123; mappedHandler.applyAfterConcurrentHandlingStarted(processedRequest, response); &#125; &#125; else &#123; // Clean up any resources used by a multipart request. if (multipartRequestParsed) &#123; cleanupMultipart(processedRequest); &#125; &#125; &#125; &#125;</code></p>
+<p>其中，方法开始时调用getHandler()方法，是用来确定哪个控制器来处理这个请求，同时获得目标处理器执行链（包括拦截器）</p>
+<p><strong>getHandler细节</strong></p>
+<p><code>protected HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception &#123; if (this.handlerMappings != null) &#123; for (HandlerMapping mapping : this.handlerMappings) &#123;//遍历Handlermap，以取得对应控制器 //此处进入下面的方法getHandlerInternal() HandlerExecutionChain handler = mapping.getHandler(request); //执行到这里，已经获得了执行控制器TestController.t1() if (handler != null) &#123; return handler; &#125; &#125; &#125; return null; &#125; ///////////////////////////////////////////////////////////////////////// ///////////////////////////////////////////////////////////////////////// /** * Look up a handler method for the given request. */ @Override protected HandlerMethod getHandlerInternal(HttpServletRequest request) throws Exception &#123; String lookupPath = getUrlPathHelper().getLookupPathForRequest(request); //mappingRegistry存着所有控制器请求url和对应类方法，（本段代码结束后图一），下面要查找bean，所以上读锁 this.mappingRegistry.acquireReadLock(); try &#123; //通过请求url找到最符合的请求方法，当前为TestController.t1() HandlerMethod handlerMethod = lookupHandlerMethod(lookupPath, request); return (handlerMethod != null ? handlerMethod.createWithResolvedBean() : null); &#125; finally &#123; this.mappingRegistry.releaseReadLock(); &#125; &#125;</code></p>
+<p><img src="https://zhangxujie.tk/wp-content/uploads/2020/03/image-11.png"></p>
+<p>图一</p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://blog.lebear.top">Leisurelybear</a></p><p> <span>Link:  </span><a href="https://blog.lebear.top/2020/03/14/142/">https://blog.lebear.top/2020/03/14/142/</a></p><p> <span>Copyright:  </span><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2020/04/02/162/" title="Arch Linux问题处理"><span>< PreviousPost</span><br><span class="prevTitle">Arch Linux问题处理</span></a><a class="nextSlogan" href="/2020/03/11/136/" title="Linux:添加开关机蜂鸣器提示"><span>NextPost ></span><br><span class="nextTitle">Linux:添加开关机蜂鸣器提示</span></a><div class="clear"></div></div><div id="comment"><div id="container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script><script>const gitalk = new Gitalk({
+  clientID: '7b32efbea888ff18bf71',
+  clientSecret: 'd6d9022e73dfc0e9e55dc8ad8604a5aa73447595',
+  repo: 'blog.lebear.top-comment',      // The repository of store comments,
+  owner: 'Leisurelybear',
+  admin: ['leisurelybear'],
+  id: location.pathname,      // Ensure uniqueness and length less than 50
+  distractionFreeMode: false  // Facebook-like distraction free mode
+})
+gitalk.render('container')
+console.log("enable gitalk.")</script></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 80vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div></div><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

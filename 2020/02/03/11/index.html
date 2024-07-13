@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>商城项目中踩到的坑(Hadoop、Kafka、Zookeeper、redis、hbase、Mysql) · LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">商城项目中踩到的坑(Hadoop、Kafka、Zookeeper、redis、hbase、Mysql)</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2020-02-03</span></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">1k</span> | Reading time: <span class="post-count">4</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p>1、前端出现此错误(背景：用springMVC做的数据库增删改查小项目，使用gradle管理，前后端分离两模块；时间20190821)</p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10xyvR.png"></p>
+<p>问题(前后端连接问题)可能原因：</p>
+<p>--打开的网址和前端请求网址一致性问题，需要把前端请求网址全字段写出来(如<a href="http://localhost:8080(8082服务器端口号)/user/add">http://localhost:8080(8082服务器端口号)/user/add</a>)；</p>
+<p>--还要注意后面方法名是否一致(如&#x2F;queryAll写成了&#x2F;queryall)，注意请求方法前后端一致：get,post,delete,put</p>
+<p>--还有Controller层是否加了@CrossOrigin，目的是为了允许跨域访问</p>
+<p>--contentType:”application&#x2F;json”，如果前端像后端传值为json格式(JSON.stringify($(“#form1”).serializeObject()))，ajax必须设置这一项，不然也会出现类似错误。</p>
+<hr>
+<p>2、数据库连接错误(前端提示为500)，此时需要把配置文件中数据库的密码加上单引号  如<strong>0412</strong>改为<strong>’0412’</strong></p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10xgDx.png"></p>
+<hr>
+<p>3、因为前后端分离，然后访问端口的问题</p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10xs29.png"></p>
+<p>前端还会提示html中的ajax处有错误</p>
+<p>仔细观察，的确，Tomcat开的端口号为8082，在配置文件yml中不但到配置，还要在前端访问的url中改写把url&#x3D;”http:&#x2F;&#x2F; localhost:<strong>8080</strong>&#x2F;user&#x2F;query”改为url&#x3D;”http:&#x2F;&#x2F; localhost:<strong>8082</strong>&#x2F;user&#x2F;query”</p>
+<p>端口号与之一致；还有可能就是provider的程序没运行完，然后consumer就开始运行了</p>
+<hr>
+<p>4、</p>
+<p>Description:（SpringBoot错误）<br>Failed to configure a DataSource: ‘url‘ attribute is not specified and no embedded datasource could be configured.<br>Reason: Failed to determine a suitable driver class<br>Action:<br>Consider the following:<br>If you want an embedded database (H2, HSQL or Derby), please put it on the classpath.<br>If you have database settings to be loaded from a particular profile you may need to activate it (no profiles are currently active).</p>
+<p>解决办法:</p>
+<p>程序入口处:在间的包下(如com.zhangxujie.consumer中刚建好就有的程序入口类)<br>@SpringBootApplication<br>public class DemoApplication {<br>修改为:<br>@SpringBootApplication(exclude &#x3D; DataSourceAutoConfiguration.class)<br>public class DemoApplication {</p>
+<p>-—记得在Service层加@Service注解<br>-—看看是否 程序入口的 xxxApplication.java 是否在最外层的包下.如果不是,把该类放在最外层的包下面</p>
+<p>-—可能包没有扫到,继续添加:</p>
+<p>@SpringBootApplication(exclude &#x3D; DataSourceAutoConfiguration.class,scanBasePackages&#x3D;{ “com.zhangxujie.consumer”})<br>public class DemoApplication {</p>
+<hr>
+<p>5、</p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10xfUO.png"></p>
+<p>Zookeeper服务器问题，可能没有开，或者host中映射关系问题</p>
+<hr>
+<p>6、前端顺利向后端传送数据，但是</p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10x2b6.png"></p>
+<p>错误显示出现在ajax</p>
+<p>但有异常显示，会发现，我们的model层User未实现序列化(implement Serializable)</p>
+<hr>
+<p>7、机器学习启动时候，出现socket error，检查hbase配置中2181端口号是否正确</p>
+<hr>
+<p>8、异常处理</p>
+<p>2019-11-08 19:51:46.468 ERROR 6372 — [nio-8082-exec-1]</p>
+<p>o.a.c.c.C.[.[.[&#x2F;].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is com.alibaba.dubbo.rpc.RpcException: Forbid consumer 192.168.56.1 access service tk.zhangxujie.api.service.IMyService from registry 192.168.56.3:2181 use dubbo version 2.5.3, Please check registry access list (whitelist&#x2F;blacklist).] with root cause</p>
+<p>com.alibaba.dubbo.rpc.RpcException: Forbid consumer 192.168.56.1 access service tk.zhangxujie.api.service.IMyService from registry 192.168.56.3:2181 use dubbo version 2.5.3, Please check registry access list (whitelist&#x2F;blacklist).</p>
+<p>解决方案：重新启动provider和consumer……</p>
+<hr>
+<p>9、异常处理 kafka内存不足</p>
+<p>Java HotSpot(TM) 64-Bit Server VM warning: INFO: os::commit_memory(0x00000000c0000000, 1073741824, 0) failed; error&#x3D;’Cannot allocate memory’ (errno&#x3D;12)</p>
+<p>解决方法</p>
+<p>进入kafka_2.11-0.10.0.1&#x2F;bin目录下，修改kafka-server-start.sh文件：</p>
+<p>找到这一行export KAFKA_HEAP_OPTS&#x3D;”-Xmx1G -Xms1G”</p>
+<p>改为   export KAFKA_HEAP_OPTS&#x3D;”-Xmx256M -Xms128M”</p>
+<hr>
+<p>10、Hadoop和HBase中出现 ssh登录　The authenticity of host 192.168.0.xxx can’t be established</p>
+<p>错误是：The authenticity of host 192.168.0.xxx can’t be established.</p>
+<p>执行ssh  -o StrictHostKeyChecking&#x3D;no  192.168.0.xxx</p>
+<hr>
+<p>11、hbaseShell异常（正常情况下hbase启动不是独占！！！）hbase启动后，打开hbase shell用list等命令不好使，报异常（org.apache.hadoop.hbase.PleaseHoldException: Master is initializing）。</p>
+<p>解决方案：1、 ntpdate 0.cn.pool.ntp.org  &#x2F;&#x2F;命令更新master和slave时间</p>
+<p>       2、先去zoo里启动zkServer然后zkCli启动，从里面用rm &#x2F;hbase删除节点</p>
+<p>       3、hdfs(hadoop) dfs -rm -R &#x2F;hbase 删除hdfs中的hbase目录</p>
+<hr>
+<p>12、init测试redis时候出现</p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10xcK1.png"></p>
+<p>很可能原因，是redisTemplate等对象没有自动装配（@Autowired）</p>
+<hr>
+<p>13、login前后端传值Method选择</p>
+<p><img src="https://s2.ax1x.com/2020/02/04/10xWVK.png"></p>
+<p>可能解决方案：把get方法换为post方法</p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://blog.lebear.top">Leisurelybear</a></p><p> <span>Link:  </span><a href="https://blog.lebear.top/2020/02/03/11/">https://blog.lebear.top/2020/02/03/11/</a></p><p> <span>Copyright:  </span><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2020/02/04/16/" title="centos 7 如何添加zookeeper自启动服务"><span>< PreviousPost</span><br><span class="prevTitle">centos 7 如何添加zookeeper自启动服务</span></a><div class="clear"></div></div><div id="comment"><div id="container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script><script>const gitalk = new Gitalk({
+  clientID: '7b32efbea888ff18bf71',
+  clientSecret: 'd6d9022e73dfc0e9e55dc8ad8604a5aa73447595',
+  repo: 'blog.lebear.top-comment',      // The repository of store comments,
+  owner: 'Leisurelybear',
+  admin: ['leisurelybear'],
+  id: location.pathname,      // Ensure uniqueness and length less than 50
+  distractionFreeMode: false  // Facebook-like distraction free mode
+})
+gitalk.render('container')
+console.log("enable gitalk.")</script></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 80vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div></div><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

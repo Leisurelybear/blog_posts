@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1>LeisurelyBear's Blog</h1><h5>Love Life, Follow Technology.</h5><div class="intro-social"><a class="fa fa-envelope" href="mailto://lebear.top@gmail.com" title="email"></a><a class="fa fa-github" href="//github.com/leisurelybear" target="_blank" title="github"></a></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><section id="recent-posts"><div class="recent-post-item"><div class="post-title"><a href="/2022/01/12/452/">由遥控车引起的不可靠的消息服务（监听断连、顺序颠倒、消息丢失）的问题及解决</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2022-01-12T05:16:35.000Z">2022-01-12</time></div><div class="recent-post-content"><p><img src="/2022/01/rc-car-4808385_960_720.jpg" alt=""></p></div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="java"> java</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="TCP"> TCP</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="WebRTC"> WebRTC</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="消息队列"> 消息队列</a></div><div class="read-more"><a class="more" href="/2022/01/12/452/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2021/02/09/427/">Red Dead Redemption 2:  永远的亚瑟 · 摩根</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2021-02-09T03:45:54.000Z">2021-02-09</time></div><div class="recent-post-content"><p><img src="/2021/02/rdr2-4.jpg" alt=""></p></div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Red Dead Redemption 2"> Red Dead Redemption 2</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="steam"> steam</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="亚瑟"> 亚瑟</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="游戏"> 游戏</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="荒野大镖客"> 荒野大镖客</a></div><div class="read-more"><a class="more" href="/2021/02/09/427/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2021/01/17/367/">分享如何低成本DIY组装一台显示器</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2021-01-17T14:07:05.000Z">2021-01-17</time></div><div class="recent-post-content"><p><img src="/2021/01/IMG_3990_压缩-scaled.jpg" alt=""></p></div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="DIY"> DIY</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="HDMI"> HDMI</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="刷新率"> 刷新率</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="数码"> 数码</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="显示器"> 显示器</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="计算机"> 计算机</a></div><div class="read-more"><a class="more" href="/2021/01/17/367/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/12/16/342/">解决使用jedis连接是报DENIED Redis is running in protected mode错误</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-12-16T14:54:04.000Z">2020-12-16</time></div><div class="recent-post-content">DENIED Redis is running in protected mode because protected mode is enabled, no bind address was specified, &lt;br&gt;no authentication password is requested to clients. In this mode connections are only accepted from the loopback interface.&lt;br&gt; If you want to connect from external computers t ...</div><div class="read-more"><a class="more" href="/2020/12/16/342/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/10/20/290/">OBS录制全屏黑屏解决方法</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-10-19T16:36:02.000Z">2020-10-20</time></div><div class="recent-post-content">问题描述：在使用OBS进行录屏时候，只能录制特定窗口，当选屏幕录制时候，确实黑屏。
+原因：obs默认只录制和自己用同显卡的程序，默认obs是用独显，所以运行游戏一般都可以录制，但是屏幕录制却不行，就是这个原因。
+1、Nvidia控制面板，使用核显运行（如果还不行，则尝试第二种方法）2、在设置-系统-显示-图形设置，使obs为核显运行  
+
+
+
+使用浏览，添加obs.exe
+
+设置其使用核显，这里是节能模式默认使用核显
+</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="OBS"> OBS</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="软件"> 软件</a></div><div class="read-more"><a class="more" href="/2020/10/20/290/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/10/20/296/">浅谈ArrayList源码实现</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-10-19T16:19:26.000Z">2020-10-20</time></div><div class="recent-post-content">
+本文记录笔者对JDK1.8下ArrayList源码的解读
+
+ArrayList中属性解读
+transient Object[] elementData; &#x2F;&#x2F;顾名思义，属性为数据空间，有容量大小限制，其中存放add进的数据
+private static final Object[] EMPTY_ELEMENTDATA &#x3D; {};&#x2F;&#x2F;如果在调用构造方法传入初始容量为0时候，会创建一个空elementData
+private int size;&#x2F;&#x2F;该属性为List中拥有的元素个数
+
+add：添加元素boolean add(E  ...</div><div class="read-more"><a class="more" href="/2020/10/20/296/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/09/07/263/">从Android Studio中导出签名APK</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-09-07T01:57:43.000Z">2020-09-07</time></div><div class="recent-post-content">
+前提：已经根据文档写出HelloWorld代码
+
+步骤1：生成签名文件在Android Studio顶栏选则Build -&gt; **Generate Signed Bundle &#x2F; APK…**（如图1-1）
+
+图1-1
+打开出现图1-2，选择APK，点击Next
+
+图1-2
+出现选择密钥界面（如图1-3），这时我们点击Create new…
+
+图1-3
+如图1-4，选择密钥存储位置，填写其他信息，然后点OK；
+
+图1-4
+有可能会报错，而且会生成一个android.jks文件（如图1-5、1-6）
+
+图1-5  
+
+图1-6
+此时按照提示 打开命令提示符（CMD），输入下面的 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="教程"> 教程</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Android"> Android</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Android Studio"> Android Studio</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="APK"> APK</a></div><div class="read-more"><a class="more" href="/2020/09/07/263/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/07/01/194/">Python爬虫实战 - 爬取视频网站的下载链接</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-06-30T18:41:20.000Z">2020-07-01</time></div><div class="recent-post-content"><p><img src="/2020/07/cobweb-3686195_1920.jpg" alt=""></p></div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="BeautifulSoup"> BeautifulSoup</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="bs4"> bs4</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Python"> Python</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="数据库操作"> 数据库操作</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="网络爬虫"> 网络爬虫</a></div><div class="read-more"><a class="more" href="/2020/07/01/194/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/04/02/162/">Arch Linux问题处理</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-04-01T20:41:35.000Z">2020-04-02</time></div><div class="recent-post-content">
+目录
+
+
+
+
+1、终端光标错位
+2、安装Tim
+3、同步时间问题
+4、无法挂载windows分区
+5、查看内核日志
+6、关机重启卡住问题
+7、pacman更新系统或安装软件锁定
+8、开机登录界面黑屏，但是可以盲打密码
+9、加入multilib32位库支持
+10、更改默认shell(见 archwiki)
+11、待补充
+12、安装NetworkManager后没法使用，没有托盘图标
+13、添加中国社区源（清华或者163都可以）1、终端光标错位
+14、安装图形界面
+15、nvidia显卡驱动以及大黄蜂bumblebee
+16、make编译软件时不能执行(可能原因)
+17、bbswitch动态切换 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Arch"> Arch</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Linux"> Linux</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="指南"> 指南</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="教程"> 教程</a></div><div class="read-more"><a class="more" href="/2020/04/02/162/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/03/14/142/">Spring MVC源码分析（一）：处理前端请求doDispatch()以及getHandler()方法细节</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-03-13T20:59:59.000Z">2020-03-14</time></div><div class="recent-post-content">首先： 容器启动时候，会在DispatcherServlet的handlerMappings中添加beanName与类对应的map映射， 以便于后续getHandler时候用{GET &#x2F;test&#x2F;t1}来取得对应请求的方法 。
+
+map映射
+简要流程：
+
+
+所有请求发来，到DispatcherServlet收到请求
+调用doDispatch()方法进行处理
+getHandler()：根据请求地址和mappingRegistry（上面有提到，可查找）找到能处理这个请求的目标处理类（处理器&lt;控制器&gt;）
+getHandlerAdapter()：根据当前处理器类（控制器 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="java"> java</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Spring MVC"> Spring MVC</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="源码分析"> 源码分析</a></div><div class="read-more"><a class="more" href="/2020/03/14/142/#more">ReadMore</a></div><hr></div></section><nav class="cxo-page-nav"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">&gt;</a></nav></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>解决使用jedis连接是报DENIED Redis is running in protected mode错误 · LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">解决使用jedis连接是报DENIED Redis is running in protected mode错误</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2020-12-16</span></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">575</span> | Reading time: <span class="post-count">2</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p><code>DENIED Redis is running</code> <code>in</code> <code>protected mode because protected mode is enabled, no bind address was specified, &lt;br&gt;no authentication password is requested to clients. In this mode connections are only accepted from the loopback interface.&lt;br&gt; If you want to connect from external computers to Redis you may adopt one of the following solutions:``1) Just disable protected mode sending the</code> <code>command</code> <code>&#39;CONFIG SET protected-mode no&#39;</code> <code>from the loopback interface by connecting to Redis from the same host the server is running, however MAKE SURE Redis is not publicly accessible from internet</code> <code>if</code> <code>you</code> <code>do</code> <code>so. Use CONFIG REWRITE to</code> <code>make</code> <code>this change permanent.``2) Alternatively you can just disable the protected mode by editing the Redis configuration</code> <code>file``, and setting the protected mode option to</code> <code>&#39;no&#39;``, and</code> <code>then</code> <code>restarting the server.``3) If you started the server manually just</code> <code>for</code> <code>testing, restart it with the</code> <code>&#39;--protected-mode no&#39;</code> <code>option.``4) Setup a bind address or an authentication password. NOTE: You only need to</code> <code>do</code> <code>one of the above things</code> <code>in</code> <code>order</code> <code>for</code> <code>the server to start accepting connections from the outside.</code></p>
+<p>1. 错误原因：由于redis的保护模式开启了，并且没有绑定ip地址，没有密码认证</p>
+<p>2. 解决方案<br>方案一：</p>
+<ol>
+<li>使用 设置CONFIG SET protected-mode no</li>
+</ol>
+<p>步骤：</p>
+<p>1. 在redis本机上打开redis-cli工具，并连接</p>
+<p>2. 在其中输入CONFIG SET protected-mode no即可</p>
+<p>缺点：</p>
+<p>该种方式只是短暂性有效，如果redisServer重新启动后还是不能正常链接</p>
+<p>方案二：</p>
+<p>1)编辑redis配置文件，将保护模式关闭</p>
+<p>步骤：</p>
+<p>由于我是直接使用redis-server 命令启动的，所以说其服务是按照其默认设置进行启动，修改&#x2F;usr&#x2F;local&#x2F;etc&#x2F;redis.conf</p>
+<p>如果没有请从下载的redis中复制一个redis.conf到这里，</p>
+<p><a target="_blank" rel="noopener" href="https://images2018.cnblogs.com/blog/917948/201805/917948-20180524201313844-172144694.png"><img src="https://images2018.cnblogs.com/blog/917948/201805/917948-20180524201313844-172144694.png"></a></p>
+<p>将bind 后面绑定的ip后面加入你本机外网的ip</p>
+<p>1</p>
+<p><code>bind 127.0.0.1 192.168.21.4</code></p>
+<p>然后保存，再使用redis-server &#x2F;usr&#x2F;local&#x2F;etc&#x2F;redis.conf启动</p>
+<p>问题：</p>
+<p>　　1.redis-cli不能直接使用，必须输入绑定的ip+d端口号才能正常使用</p>
+<p>　　2.不安全</p>
+<p>2). 将redis.conf中安全模式关闭</p>
+<p><a target="_blank" rel="noopener" href="https://images2018.cnblogs.com/blog/917948/201805/917948-20180524203128935-489749165.png"><img src="https://images2018.cnblogs.com/blog/917948/201805/917948-20180524203128935-489749165.png"></a></p>
+<p>将该保护模式改为no</p>
+<p>再试</p>
+<p>缺点：1.保护模式关闭后不安全</p>
+<p>3)设置密码访问模式</p>
+<p>在redis.conf中加入一行密码设置</p>
+<p>1</p>
+<p><code>require 你的密码</code></p>
+<p> 保存，再重新启动redis客户端</p>
+<p>以上四种方式解决该错误都可以，但是根据上面的优缺点，</p>
+<p><strong>选择第四种方式最佳，安全性最高</strong></p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://blog.lebear.top">Leisurelybear</a></p><p> <span>Link:  </span><a href="https://blog.lebear.top/2020/12/16/342/">https://blog.lebear.top/2020/12/16/342/</a></p><p> <span>Copyright:  </span><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2021/01/17/367/" title="分享如何低成本DIY组装一台显示器"><span>< PreviousPost</span><br><span class="prevTitle">分享如何低成本DIY组装一台显示器</span></a><a class="nextSlogan" href="/2020/10/20/290/" title="OBS录制全屏黑屏解决方法"><span>NextPost ></span><br><span class="nextTitle">OBS录制全屏黑屏解决方法</span></a><div class="clear"></div></div><div id="comment"><div id="container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script><script>const gitalk = new Gitalk({
+  clientID: '7b32efbea888ff18bf71',
+  clientSecret: 'd6d9022e73dfc0e9e55dc8ad8604a5aa73447595',
+  repo: 'blog.lebear.top-comment',      // The repository of store comments,
+  owner: 'Leisurelybear',
+  admin: ['leisurelybear'],
+  id: location.pathname,      // Ensure uniqueness and length less than 50
+  distractionFreeMode: false  // Facebook-like distraction free mode
+})
+gitalk.render('container')
+console.log("enable gitalk.")</script></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 80vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div></div><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>剑指offer：字符串的排列（划分子问题） · LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">剑指offer：字符串的排列（划分子问题）</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2020-02-08</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="java"> java</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="数据结构"> 数据结构</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="算法"> 算法</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="剑指offer"> 剑指offer</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="字符串"> 字符串</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="递归"> 递归</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">605</span> | Reading time: <span class="post-count">2</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h3><span id="问题描述">问题描述：</span></h3><p>求解一个字符串中字符的全排列。</p>
+<p>如：给定字符串”<strong>abc</strong>“</p>
+<p>求出全排列： <strong>abc, acb, bac, bca, cad, cba</strong></p>
+<h3><span id="思路"><strong>思路：</strong></span></h3><p>这道题排列不是问题，问题是方法不对会导致结果有重复元素。如果不能够一次性不重复排列，则会在去重上大费功夫。</p>
+<p>这个问题我们不难想到，与“青蛙跳台阶”、“斐波那契数列”等问题解决方法有异曲同工之妙，仔细看来，这个问题也是可以划分为子问题，解决子问题进而逐步解决整体。但是，什么是子问题呢？</p>
+<p>举个例子，我们用输入字符串 “<strong>abcd</strong>“ 来说明：</p>
+<p>（1）我们要求<strong>abcd</strong>的全排列，就可以分别以 <strong>a, b, c, d</strong> 开头，然后求 <strong>bcd, acd, bad, bca</strong> 的全排列。</p>
+<p>（2）循环求上述四种情况，对于其中之一 <strong>a</strong>开头，后接<strong>bcd</strong>的情况，又可以对子串”<strong>bcd</strong>“进行（<strong>1</strong>）操作——即求<strong>bcd</strong>全排列。</p>
+<p>（3）直到子问题级别到达只剩一个子串的全排列时候，就可以递归返回上一层了。</p>
+<h3><span id="解决方法-java代码">解决方法 - java代码：</span></h3><p><code>public class 字符串的排列 &#123; public static List permutation(String str)&#123; if(str == null str.length() == 0)&#123;//如果字符串为空，直接返回空 return null; &#125; List list = new ArrayList&lt;&gt;();//实例化一个容器，用来存放全排列结果 permutationCore(str.toCharArray(), 0, list); &#125; public static void permutationCore(char[] chs, int index, List list)&#123; if(index == chs.length)&#123;//上述abcd，当index移动到结尾字符d时候，可以选择把abcd加入list了 list.add(String.valueOf(chs)); &#125; for(int i = index; i &lt; chs.length; i++)&#123; //i从index到结尾下标，可以使每次问题字符串的开头字符遍历完 //第一次：a bcd //第二次：b acd //...... char tmp = chs[i]; chs[i] = chs[index]; chs[index] = tmp; permutationCore(chs, index + 1, list);//解决当前字符开头的子串对应的子问题，如bcd, acd... //子问题解决完毕后，还需要恢复 //如第二次循环前面str变成了bacd //接下来还有再变回abcd，才能继续下一轮该表首字符 tmp = chs[i]; chs[i] = chs[index]; chs[index] = tmp; &#125; &#125; public static void main(String[] args) &#123;//测试程序 String str = &quot;abcd&quot;; List list = permutation(str); list.forEach(c -&gt; System.out.print(c + &quot; - &quot;)); &#125; &#125;</code></p>
+<p>运行结果：</p>
+<p><strong>abcd - abdc - acbd - acdb - adcb - adbc - bacd - badc - bcad - bcda - bdca - bdac - cbad - cbda - cabd - cadb - cdab - cdba - dbca - dbac - dcba - dcab - dacb - dabc -</strong></p>
+<hr>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://blog.lebear.top">Leisurelybear</a></p><p> <span>Link:  </span><a href="https://blog.lebear.top/2020/02/08/110/">https://blog.lebear.top/2020/02/08/110/</a></p><p> <span>Copyright:  </span><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2020/03/11/136/" title="Linux:添加开关机蜂鸣器提示"><span>< PreviousPost</span><br><span class="prevTitle">Linux:添加开关机蜂鸣器提示</span></a><a class="nextSlogan" href="/2020/02/07/83/" title="剑指offer：二叉搜索树与双向链表"><span>NextPost ></span><br><span class="nextTitle">剑指offer：二叉搜索树与双向链表</span></a><div class="clear"></div></div><div id="comment"><div id="container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script><script>const gitalk = new Gitalk({
+  clientID: '7b32efbea888ff18bf71',
+  clientSecret: 'd6d9022e73dfc0e9e55dc8ad8604a5aa73447595',
+  repo: 'blog.lebear.top-comment',      // The repository of store comments,
+  owner: 'Leisurelybear',
+  admin: ['leisurelybear'],
+  id: location.pathname,      // Ensure uniqueness and length less than 50
+  distractionFreeMode: false  // Facebook-like distraction free mode
+})
+gitalk.render('container')
+console.log("enable gitalk.")</script></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 80vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">问题描述：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">思路：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">解决方法 - java代码：</span></a></li></ol></div><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

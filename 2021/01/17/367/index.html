@@ -1,0 +1,167 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>分享如何低成本DIY组装一台显示器 · LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">分享如何低成本DIY组装一台显示器</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2021-01-17</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="DIY"> DIY</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="HDMI"> HDMI</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="刷新率"> 刷新率</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="数码"> 数码</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="显示器"> 显示器</a><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="计算机"> 计算机</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">1.5k</span> | Reading time: <span class="post-count">5</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h2><span id="一-写在前面">一、写在前面</span></h2><p>相信有许多动手能力强的朋友，你是否想组装一台属于自己的独一无二的显示器呢？笔者下面分享一下Diy显示器的过程。文中也有一些对于显示器参数的拙见以及显示器最终的测试方式。</p>
+<p><img src="/2021/01/image-14.png"></p>
+<p>转载自酷安</p>
+<p><img src="/2021/01/image-15.png"></p>
+<p>转载自酷安</p>
+<p><img src="https://s3.ax1x.com/2021/01/18/sy6tr6.jpg"></p>
+<p>笔者DIY显示器成品</p>
+<h2><span id="二-首先了解diy显示器都需要准备哪些部件">二、首先了解DIY显示器都需要准备哪些部件</span></h2><ul>
+<li>液晶屏面板</li>
+<li>驱动板</li>
+<li>外壳</li>
+<li>HDMI&#x2F;DP&#x2F;VGA线</li>
+<li>电源线</li>
+</ul>
+<h2><span id="三-选购液晶屏面板">三、选购液晶屏面板</span></h2><p><img src="/2021/01/image-5.png"></p>
+<p>[su_highlight]流程：选择分辨率（1080P） —— 选择屏幕大小（21.5‘）—— 选择屏幕类型（IPS）—— 选择品牌 —— 某宝&#x2F;某东选购[&#x2F;su_highlight]</p>
+<p>[su_box title&#x3D;”科普” style&#x3D;”soft” box_color&#x3D;”#8a0014” radius&#x3D;”5”]首先补习一下屏幕相关知识：  </p>
+<p>IPS屏和TN屏？<br>IPS屏：直观感受柔和、色彩更精准、可视角度大（在侧面看屏幕依然不损失太多色彩）<br>TN屏：响应时间相比同水平IPS屏幕低（电竞屏幕常用），更容易做到高刷新率，但是可视角度略小于同水平IPS屏幕（在侧面看会偏白）<br>8bit？10bit？<br>8bit表示每个原色具有256个灰阶,即0-255对应色彩从黑到白的灰度级别,10bit表示单色彩通道具有1024个灰度级别,色阶范围是0-1023。还有一种叫做“8抖10bit”，原生8bit，通过闪烁颜色强行模拟出来10bit的色数。这个当然是越高越好，越高则越能体现出色彩的渐变。<br>色域?<br>对于设计使用的显示器要求严格，有三个标准：sRGB、NTSC、Adobe RGB，覆盖越全面越好，说明显示器可以表现的色彩就越丰富。<br>除此之外，刷新率（屏幕每秒刷新的次数），分辨率（像素点的数量）这些常见参数相比大家已经非常清晰，就不做赘述了。 [&#x2F;su_box]</p>
+<p>这里通过屏库网[su_button url&#x3D;”<a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/6dad5075d1dc40a123e36ea3.html&quot;">https://jingyan.baidu.com/article/6dad5075d1dc40a123e36ea3.html&quot;</a> target&#x3D;”blank” style&#x3D;”bubbles” size&#x3D;”4” radius&#x3D;”round” icon&#x3D;”icon: link” text_shadow&#x3D;”0px 0px 0px #000000”]访问屏库网[&#x2F;su_button]来查找选取面板。</p>
+<p>因为笔者短时间使用该屏幕，所以就只选择了1080P的屏幕，这里笔者通过 1920*1080，21.5英寸，IPS屏来筛选到以下内容。</p>
+<p><img src="/2021/01/image.png"></p>
+<p>这里我们根据自己的需求，可以查找2K，4K等其他不同分辨率规格的屏幕，请有能力的同学一定选取大厂的屏幕，比如LG、三星，当然价钱也会稍微贵一些，但质量有保证。</p>
+<p><img src="/2021/01/image-1.png"></p>
+<p>接着点进去，我们可以看到详细的显示器参数，如果我们是选购笔记本显示器，那么请注意接口是多少Pin的，要和你笔记本支持的相匹配（当然我的笔记本也换过屏幕，说起来全是泪QAQ），这里没问题后，到电商平台搜索相关型号（比如<a target="_blank" rel="noopener" href="https://www.panelook.cn/HR215WU1-210_BOE_21.5_LCM_overview_cn_21409.html"><strong>HR215WU1-210</strong></a>）</p>
+<p><img src="/2021/01/image-2.png"></p>
+<p>一般这里随便选取一家等级高的店买就好，一般不会翻车（大多便宜的屏幕都是拆机屏，一般没大问题），买前先和店主沟通，说出你要的型号，然后差不多下单即可。</p>
+<h2><span id="四-驱动板">四、驱动板</span></h2><p><img src="/2021/01/image-4.png"></p>
+<p>我们有了显示器。但是如果要连接你的笔记本or你的显卡，还需要HDMI&#x2F;VGA&#x2F;DP线。至于这个线插在哪里，就需要考虑到驱动板，驱动板顾名思义就是驱动我们的屏幕的电路板，是一块屏幕的大脑，当然这个大脑成本不高所以也不是很贵。</p>
+<p>驱动板我们也可以在某宝搜索购买，同样找到后，联系客服，说明显示器面板型号，他会推荐给我们响应的驱动板。</p>
+<p><img src="/2021/01/image-3.png"></p>
+<h2><span id="五-外壳">五、外壳</span></h2><p>两种方案：微积木（可以个性化拼装、加灯、但是费时费力）、直接买显示器外壳（普通实用）</p>
+<h3><span id="1-微积木">1、微积木</span></h3><p>某宝或者1688搜索微积木选便宜的购买，我当时是购买了5000颗微积木，拼显示器外壳</p>
+<p><img src="/2021/01/image-6.png"></p>
+<p><img src="https://s3.ax1x.com/2021/01/18/sy6OdU.jpg"></p>
+<h3><span id="2-直接购买外壳">2、直接购买外壳</span></h3><p>从某宝，搜索显示器外壳，然后联系商家，说明显示器大小参数，商家会给你推荐合适的商品，或者从咸鱼买别人坏了的显示器的外壳。</p>
+<h2><span id="六-hdmix2fdpx2fvga线">六、HDMI&#x2F;DP&#x2F;VGA线</span></h2><p>这些线都是视频输出的线，显卡输出到显示器则需要有线连接。一般便宜的显示器驱动板，具有HDMI口和VGA口，VGA适用于稍微老一点的PC，HDMI高清线为比较常用的线，DP则为更高端的具有更高带宽的线。根据驱动板的接口来选择</p>
+<p>HDMI</p>
+<p><img src="/2021/01/image-11.png"></p>
+<p>VGA</p>
+<p><img src="/2021/01/image-8.png"></p>
+<p>DP</p>
+<p><img src="/2021/01/image-10.png"></p>
+<p>如下图为驱动板，你需要做的就是购买你驱动板和显卡（or笔记本）同时支持的接口的线即可。</p>
+<p><img src="/2021/01/image-4.png"></p>
+<h2><span id="七-电源线">七、电源线</span></h2><p>买显示器电源线即可，一般12V 2A即可，如果不清楚，可以在某宝搜索后，问商家。</p>
+<p><img src="/2021/01/image-13.png"></p>
+<h2><span id="八-安装-测试">八、安装、测试</span></h2><h3><span id="1-安装">1、安装</span></h3><p><img src="https://s3.ax1x.com/2021/01/18/sycL6I.png"></p>
+<p><img src="https://s3.ax1x.com/2021/01/18/sygcE8.png"></p>
+<p>最后，再连接HDMI线（驱动板与笔记本或显卡连接），点亮，下图为连接笔记本后点亮成功。</p>
+<p><img src="https://s3.ax1x.com/2021/01/18/syroxx.jpg"></p>
+<h2><span id="2-测试">2、测试</span></h2><h4><span id="1-使用displayx工具">1、使用DisplayX工具</span></h4><p>DisplayX 下载地址：<a target="_blank" rel="noopener" href="https://wws.lanzous.com/ikgRKkix8ji">https://wws.lanzous.com/ikgRKkix8ji</a> [su_button url&#x3D;”<a target="_blank" rel="noopener" href="https://wws.lanzous.com/ikgRKkix8ji&quot;">https://wws.lanzous.com/ikgRKkix8ji&quot;</a> target&#x3D;”blank” background&#x3D;”#94170b” radius&#x3D;”round” icon&#x3D;”icon: link” text_shadow&#x3D;”0px 0px 0px #000000”]点击访问[&#x2F;su_button]</p>
+<p>中文界面，里面的功能一目了然，大家可以使用该工具根据中文提示来测试显示器质量。</p>
+<p><img src="/2021/01/image-17.png"></p>
+<h4><span id="2-刷新率测试">2、刷新率测试</span></h4><p>UFO Test：<a target="_blank" rel="noopener" href="https://www.testufo.com/">https://www.testufo.com/</a> [su_button url&#x3D;”<a target="_blank" rel="noopener" href="https://www.testufo.com/&quot;">https://www.testufo.com/&quot;</a> target&#x3D;”blank” background&#x3D;”#94170b” radius&#x3D;”round” icon&#x3D;”icon: link” text_shadow&#x3D;”0px 0px 0px #000000”]点击访问[&#x2F;su_button]</p>
+<p><img src="/2021/01/image-18.png"></p>
+<h2><span id="九-写在最后">九、写在最后</span></h2><p>曾经我以为，能坚持做一件事是因为这件事是好的；现在才发现，而是因为喜欢才能让自己坚持下去。喜欢技术，喜欢尝试，喜欢动手，这就是我。后续，还会出一篇关于路由器刷机的文章。</p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://blog.lebear.top">Leisurelybear</a></p><p> <span>Link:  </span><a href="https://blog.lebear.top/2021/01/17/367/">https://blog.lebear.top/2021/01/17/367/</a></p><p> <span>Copyright:  </span><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/2021/02/09/427/" title="Red Dead Redemption 2:  永远的亚瑟 · 摩根"><span>< PreviousPost</span><br><span class="prevTitle">Red Dead Redemption 2:  永远的亚瑟 · 摩根</span></a><a class="nextSlogan" href="/2020/12/16/342/" title="解决使用jedis连接是报DENIED Redis is running in protected mode错误"><span>NextPost ></span><br><span class="nextTitle">解决使用jedis连接是报DENIED Redis is running in protected mode错误</span></a><div class="clear"></div></div><div id="comment"><div id="container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script><script>const gitalk = new Gitalk({
+  clientID: '7b32efbea888ff18bf71',
+  clientSecret: 'd6d9022e73dfc0e9e55dc8ad8604a5aa73447595',
+  repo: 'blog.lebear.top-comment',      // The repository of store comments,
+  owner: 'Leisurelybear',
+  admin: ['leisurelybear'],
+  id: location.pathname,      // Ensure uniqueness and length less than 50
+  distractionFreeMode: false  // Facebook-like distraction free mode
+})
+gitalk.render('container')
+console.log("enable gitalk.")</script></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 80vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">一、写在前面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">二、首先了解DIY显示器都需要准备哪些部件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">三、选购液晶屏面板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">四、驱动板</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">五、外壳</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">5.1.</span> <span class="toc-text">1、微积木</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">5.2.</span> <span class="toc-text">2、直接购买外壳</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">六、HDMI&#x2F;DP&#x2F;VGA线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text">七、电源线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">8.</span> <span class="toc-text">八、安装、测试</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">8.1.</span> <span class="toc-text">1、安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">9.</span> <span class="toc-text">2、测试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">9.0.1.</span> <span class="toc-text">1、使用DisplayX工具</span></a></li><li class="toc-item toc-level-4"><a class="toc-link"><span class="toc-number">9.0.2.</span> <span class="toc-text">2、刷新率测试</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">10.</span> <span class="toc-text">九、写在最后</span></a></li></ol></div><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>

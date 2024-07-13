@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="Leisurelybear"><meta name="renderer" content="webkit"><meta name="copyright" content="Leisurelybear"><meta name="keywords" content="Leisurelybear's Blog"><meta name="description" content="leisurelybear 的博客，分享科技、数码、编程相关的内容，同时也会分享日常生活记录。"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>LeisurelyBear Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="stylesheet" href="/css/szgotop.css"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><script src="/js/szgotop.js" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><meta name="generator" content="Hexo 6.0.0"><link rel="alternate" href="/atom.xml" title="Leisurelybear's Blog" type="application/atom+xml">
+</head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/favicon_32x32_bear.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">Lebear</div><div class="profile-signature">If you don't like the world, create one instead of complaining.</div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 80vh;background-image: url(/img/intro/index-bg.jpg);background-repeat: no-repeat;background-position: top center;background-size: cover;-webkit-background-size: cover; -o-background-size: cover;"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">LeisurelyBear's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a><a href="/friends/">Friends</a></div></i><div class="clear"></div></section></nav><h1>LeisurelyBear's Blog</h1><h5>Love Life, Follow Technology.</h5><div class="intro-social"><a class="fa fa-envelope" href="mailto://lebear.top@gmail.com" title="email"></a><a class="fa fa-github" href="//github.com/leisurelybear" target="_blank" title="github"></a></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><section id="recent-posts"><div class="recent-post-item"><div class="post-title"><a href="/2020/03/11/136/">Linux:添加开关机蜂鸣器提示</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-03-10T16:00:00.000Z">2020-03-11</time></div><div class="recent-post-content">应用：Linux服务器在没有音频输出和显示输出的情况下，利用蜂鸣器可以快速判断启动状况。
+添加systemd服务：
+# &#x2F;etc&#x2F;systemd&#x2F;system&#x2F;beep-up.service
+[Unit]Description&#x3D;Beep after system startDefaultDependencies&#x3D;noAfter&#x3D;multi-user.target
+[Service]Type&#x3D;oneshotExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;beep -f 3000 -l 1 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Linux"> Linux</a></div><div class="read-more"><a class="more" href="/2020/03/11/136/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/02/08/110/">剑指offer：字符串的排列（划分子问题）</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-02-08T00:53:20.000Z">2020-02-08</time></div><div class="recent-post-content">问题描述：求解一个字符串中字符的全排列。
+如：给定字符串”abc“
+求出全排列： abc, acb, bac, bca, cad, cba
+思路：这道题排列不是问题，问题是方法不对会导致结果有重复元素。如果不能够一次性不重复排列，则会在去重上大费功夫。
+这个问题我们不难想到，与“青蛙跳台阶”、“斐波那契数列”等问题解决方法有异曲同工之妙，仔细看来，这个问题也是可以划分为子问题，解决子问题进而逐步解决整体。但是，什么是子问题呢？
+举个例子，我们用输入字符串 “abcd“ 来说明：
+（1）我们要求abcd的全排列，就可以分别以 a, b, c, d 开头，然后求 bcd, acd, bad, bc ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="java"> java</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="数据结构"> 数据结构</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="算法"> 算法</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="剑指offer"> 剑指offer</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="字符串"> 字符串</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="递归"> 递归</a></div><div class="read-more"><a class="more" href="/2020/02/08/110/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/02/07/83/">剑指offer：二叉搜索树与双向链表</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-02-07T03:39:13.000Z">2020-02-07</time></div><div class="recent-post-content">问题描述：输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向，比如输入下图中左边的二叉搜索树，则输出转换之后的排序双向链表。
+
+二叉搜索树
+转化为如下双向链表
+
+思路：二叉搜索树转化为双向链表，可以看作中序遍历二叉树
+创建一个栈stack用来存储遍历的节点
+然后设置两个TreeNode节点（lastNode、p）
+—— lastNode用来存储上一次操作的节点
+—— p用来存储当前操作节点
+while循环判断左子树，遇到的节点都入栈，直到下一个节点为null。
+然后开始出栈，出栈后，把上一个节点(lastNode!&#x3D;nul ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="java"> java</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="二叉搜索树"> 二叉搜索树</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="数据结构"> 数据结构</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="算法"> 算法</a></div><div class="read-more"><a class="more" href="/2020/02/07/83/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/02/05/21/">Arch Linux 安装 新手指北</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-02-04T19:32:44.000Z">2020-02-05</time></div><div class="recent-post-content">
+参考 ArchWiki Installation guide
+https://wiki.archlinux.org/index.php/Installation_guide
+
+（一）安装前的准备 Pre-installation（1）下载镜像首先下载页面下载需要的镜像
+
+推荐磁力下载
+
+当然也可以在国内镜像站下载
+至于官方所说验证签名，大家可以验证一下，一般情况下在这些正规网站下载不大会出问题，这里笔者就省略了。
+
+（2）安装介质 Boot the live environment笔者这里选用的是u盘安装，可以使用 ultralISO或 rufus 来将（1）下载好的镜像写入u盘，如果不会可 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Arch"> Arch</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Linux"> Linux</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="OS"> OS</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="指南"> 指南</a><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="操作系统"> 操作系统</a></div><div class="read-more"><a class="more" href="/2020/02/05/21/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/02/04/19/">Linux下网易云音乐打开无反应</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-02-04T14:30:41.000Z">2020-02-04</time></div><div class="recent-post-content">解决方法一：在终端 sudo netease-cloud-music 以root权限运行
+解决方法二：桌面图标右键以文本方式打开，然后找到Exec&#x3D;这一行 改为以下内容 Exec&#x3D;sudo netease-cloud-music %U –nosandbox
+</div><div class="read-more"><a class="more" href="/2020/02/04/19/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/02/04/16/">centos 7 如何添加zookeeper自启动服务</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-02-04T14:18:49.000Z">2020-02-04</time></div><div class="recent-post-content">1$ vim zookeeper    # 编辑一个shell脚本,如果没有安装vim可用nano，vi等代替vim
+
+1234567891011121314内容如下：#!/bin/bash  #chkconfig:2345 20 90  #description:zookeeper  #processname:zookeeper  export JAVA_HOME=/usr/java/defaultcase $1 in          start) su - zookeeper -c &#x27;/usr/local/zookeeper-3.4.5/bin/zkServer.sh star ...</div><div class="read-more"><a class="more" href="/2020/02/04/16/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/2020/02/03/11/">商城项目中踩到的坑(Hadoop、Kafka、Zookeeper、redis、hbase、Mysql)</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2020-02-03T06:20:41.000Z">2020-02-03</time></div><div class="recent-post-content">1、前端出现此错误(背景：用springMVC做的数据库增删改查小项目，使用gradle管理，前后端分离两模块；时间20190821)
+
+问题(前后端连接问题)可能原因：
+--打开的网址和前端请求网址一致性问题，需要把前端请求网址全字段写出来(如http://localhost:8080(8082服务器端口号)/user/add)；
+--还要注意后面方法名是否一致(如&#x2F;queryAll写成了&#x2F;queryall)，注意请求方法前后端一致：get,post,delete,put
+--还有Controller层是否加了@CrossOrigin，目的是为了允许跨域访问
+--cont ...</div><div class="read-more"><a class="more" href="/2020/02/03/11/#more">ReadMore</a></div><hr></div></section><nav class="cxo-page-nav"><a class="extend prev" rel="prev" href="/">&lt;</a><a class="page-number" href="/">1</a><span class="page-number current">2</span></nav></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span> Modified based on &nbsp;</span><a target="_blank" rel="noopener" href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span><p class="footer-container"><span>Copyright © 2019-2022 LeisurelyBear All rights reserved.</span></p></div></footer><!-- catelog--><!-- top--><!--i.fa.fa-arrow-up#go-up.close(aria-hidden="true")--><div class="back-to-top cd-top faa-float animated cd-is-visible" style="top: -900px;"></div></body></html>
